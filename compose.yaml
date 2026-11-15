@@ -1,0 +1,8 @@
+services:
+  netsim:
+    build: .
+    ports:
+      - "${NETSIM_PUBLIC_PORT:-8080}:8000"
+    environment:
+      PORT: "8000"
+    restart: unless-stopped

@@ -1,0 +1,14 @@
+[
+  {
+    "check": "backend-tests",
+    "exit_code": 0
+  },
+  {
+    "check": "frontend-build",
+    "exit_code": 0
+  },
+  {
+    "check": "browser-tests",
+    "exit_code": 0
+  }
+]

@@ -1,0 +1,158 @@
+NetSim Lite | Computer Networks PBL Project Guide
+1
+ NETSIM LITE
+ Interactive Network Topology and Packet Routing Simulator
+ Computer Networks | Project-Based Learning | Semester 5
+Project objective: Develop a web-based educational simulator that allows users to create network topologies,
+calculate shortest paths, visualize logical packet delivery, configure IPv4 subnets, and explore the effect of network
+link failures.
+Recommended timeline: Six days for a focused prototype. Scope: Educational graph-based simulation; not a full
+implementation of real-world router, switch, Ethernet, or TCP behavior.
+1. Project overview
+NetSim Lite is a simplified, web-based network simulation tool inspired by the educational workflow of network
+topology simulators. Users create computers, routers and switches, connect them with weighted links, and select a
+source and destination. The system calculates a minimum-cost route and displays a hop-by-hop packet animation.
+If a link fails, it recalculates the path or reports that the destination is unreachable.
+Example scenario: PC A connects to PC B through either R1 or R2. The route via R1 has link costs 1 + 1 = 2; the
+route via R2 has costs 3 + 2 = 5. Dijkstra selects R1. If R1 links are disabled, the route via R2 becomes the
+available alternative.
+2. Main functional modules
+Network topology builder
+Add, move and remove PCs, routers and switches; create and delete links; assign device names and IPv4
+addresses; edit non-negative link costs.
+Routing algorithm engine
+Build a weighted graph and use Dijkstra's algorithm to find the minimum-cost path; show path nodes, total cost and
+unreachable destinations.
+Packet transmission simulator
+Select source and destination, send a simulated packet, animate each hop and log route and delivery events.
+IPv4 subnet calculator
+Given an IPv4 address and CIDR prefix, compute network address, subnet mask, broadcast address and usable
+host range.
+Network failure simulator
+Disable or restore links, recalculate routes, highlight the new path, and explain delivery failure when no path exists.
+
+NetSim Lite | Computer Networks PBL Project Guide
+2
+3. Mapping to the Computer Networks syllabus
+Unit
+Relevant topics
+Project demonstration
+I
+Network models, packet switching
+Conceptual packet flow and topology
+II
+Network devices and LAN concepts
+Visual PC, switch and router nodes (simplified)
+III
+Routing algorithms, IPv4, subnetting
+Dijkstra, link failure, IPv4 calculator
+IV
+Client-server model, HTTP, sockets
+React to FastAPI REST communication
+Academic limitation: The simulator directly implements graph-based routing and subnet calculations. Device icons
+do not imply realistic MAC learning, Ethernet frame forwarding, or actual TCP/IP stack emulation.
+4. Algorithm and simulation logic
+Dijkstra shortest-path routing
+ Represent each device as a graph node and each active link as an edge.
+ Assign every link a non-negative cost.
+ Calculate the minimum total cost between source and destination using Dijkstra.
+ Return the path, total cost and reachable/unreachable status.
+ For link failures, exclude disabled edges and recompute the route.
+Example: A - R1 - B costs 1 + 1 = 2; A - R2 - B costs 3 + 2 = 5. The chosen path is A - R1 - B. After failure of R1
+connections, the alternative cost is 5.
+Packet animation
+The backend returns a list of nodes along the selected route. The frontend highlights the links in sequence, moves a
+packet marker between nodes and records events such as packet created, forwarded and delivered. This is a
+logical animation, not actual network packet transmission.
+5. Proposed system architecture
+Frontend: React + TypeScript + Vite, Tailwind CSS, React Flow for the topology editor and packet animation.
+Backend: Python + FastAPI for request validation and simulation endpoints. NetworkX handles weighted graph
+routing. Python ipaddress handles IPv4 subnet calculations.
+Persistence: Browser localStorage for saved topology JSON. A database is unnecessary for the first version.
+Data flow: User creates topology in React -> frontend submits JSON to FastAPI -> backend validates nodes, links
+and costs -> NetworkX calculates the route -> FastAPI returns path and cost -> React highlights and animates the
+path.
+
+NetSim Lite | Computer Networks PBL Project Guide
+3
+Proposed API endpoints
+Method and endpoint
+Function
+POST /api/route
+Calculate shortest path and total cost
+POST /api/simulate
+Return packet hop events for animation
+POST /api/subnet
+Calculate IPv4 subnet details
+GET /api/health
+Confirm backend availability
+Example route response
+{"source":"PC-A", "destination":"PC-B", "path":["PC-A","R1","PC-B"], "total_cost":2,
+"reachable":true}
+6. Interface layout
+ Left sidebar: device palette, selection tools and sample topology presets.
+ Main canvas: drag-and-drop network devices and connected links.
+ Right properties panel: device label, IP address, link weight and enable/disable status.
+ Bottom event log: chosen route, packet hops, delivery result and error messages.
+ Separate subnet calculator page: IPv4 CIDR input and computed network properties.
+7. Suggested project structure
+netsim-lite/
+frontend/src/components/ (TopologyCanvas, DeviceNode, PacketAnimator, NetworkControls)
+frontend/src/pages/ (Dashboard, SubnetCalculator)
+frontend/src/services/api.ts
+backend/ (main.py, routing.py, simulator.py, subnet.py, models.py)
+tests/
+README.md
+
+NetSim Lite | Computer Networks PBL Project Guide
+4
+8. Six-day development roadmap
+Day
+Focus
+Deliverables
+1
+Frontend setup
+React/Vite/Tailwind, dashboard, React Flow canvas
+2
+Topology editor
+Nodes, connections, editing and deletion
+3
+Routing backend
+FastAPI, Dijkstra, graph validation, unreachable cases
+4
+Packet visualization
+API integration, hop animation, link failures
+5
+Subnetting and tests
+IPv4 calculator, local save/load, edge-case tests
+6
+Finalization
+UI polish, demo scenarios, screenshots, report and PPT
+9. Demonstration scenarios for evaluation
+ Shortest path: create two alternative routes and show the lower-cost path.
+ Link failure: disable the primary route, recalculate and demonstrate rerouting.
+ Subnetting: input 192.168.1.0/26; show network 192.168.1.0, broadcast 192.168.1.63, mask 255.255.255.192 and
+usable hosts 192.168.1.1 to 192.168.1.62.
+ Unreachable destination: disconnect all paths and show an appropriate error.
+10. Testing and viva preparation
+ Validate duplicate node IDs, missing nodes, invalid IP addresses and negative link costs.
+ Test source equal to destination, disconnected graphs, zero-cost links and equal-cost alternatives.
+ Explain why Dijkstra requires non-negative weights and how route cost differs from latency.
+ Explain how client-server HTTP communication connects the React frontend and FastAPI backend.
+ Distinguish an educational graph simulation from physical routers, Ethernet switches and actual packet
+forwarding.
+11. Scope control and expected submission
+Must-have: topology builder, shortest-path routing, packet animation, link-failure rerouting and subnet calculator.
+Optional only if time remains: additional topology presets, TCP/UDP educational comparison and exportable
+simulation reports.
+Out of scope: real packet capture, full OSPF/BGP implementations, detailed switching protocols, real TCP
+congestion control, authentication and cloud database.
+Final deliverables: working web application, source code, README, screenshots, PBL report, presentation and
+short demonstration video.
+
+NetSim Lite | Computer Networks PBL Project Guide
+5
+12. Final recommendation
+Prioritize a reliable, complete prototype over an oversized simulator. First deliver a working four-node topology with
+shortest-path calculation; then add packet animation, link failure and subnetting. This provides a credible,
+syllabus-aligned and demonstrable Computer Networks PBL within the available six-day schedule.

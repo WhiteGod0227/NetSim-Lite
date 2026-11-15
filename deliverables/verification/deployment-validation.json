@@ -1,0 +1,15 @@
+{
+  "backend_core_and_production_tests": {
+    "passed": 18
+  },
+  "browser_tests_against_production": {
+    "passed": 9,
+    "base_url": "http://127.0.0.1:8080",
+    "vite_used": false
+  },
+  "frontend_build": "pass",
+  "linux_python_312_dependency_resolution": "pass",
+  "production_health": "ok",
+  "docker_image_build": "Not run: Docker is not installed",
+  "cloud_deployment": "Not performed"
+}

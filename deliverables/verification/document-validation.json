@@ -1,0 +1,10 @@
+{
+  "docx_images": 8,
+  "pptx_slides": 14,
+  "pptx_bounds": "pass",
+  "pptx_notes": "all 14 slides",
+  "source_archive_files": 48,
+  "source_archive_crc": "pass",
+  "identity_placeholders": "Awaiting user details; editable in submission-details.json",
+  "native_office_rendering": "Not available; review DOCX/PPTX in Office before institutional submission."
+}

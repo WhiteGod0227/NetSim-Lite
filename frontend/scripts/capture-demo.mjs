@@ -1,0 +1,60 @@
+import {chromium} from '@playwright/test';
+import {mkdir,rename,writeFile} from 'node:fs/promises';
+import path from 'node:path';
+
+const out=path.resolve('../deliverables');
+await mkdir(path.join(out,'screenshots'),{recursive:true});
+const browser=await chromium.launch({channel:'msedge',headless:true});
+const context=await browser.newContext({viewport:{width:1440,height:1260},recordVideo:{dir:path.join(out,'video'),size:{width:1440,height:1260}}});
+const page=await context.newPage();
+const errors=[];page.on('pageerror',error=>errors.push(error.message));
+async function caption(text){await page.evaluate(text=>{let el=document.getElementById('demo-caption');if(!el){el=document.createElement('div');el.id='demo-caption';el.style.cssText='position:fixed;bottom:12px;left:15%;width:70%;z-index:99999;background:#07121ff2;color:#e9fff7;border:1px solid #2bd0ae;border-radius:10px;padding:15px 24px;text-align:center;font:17px Arial;line-height:1.5;box-shadow:0 8px 30px #0009;pointer-events:none';document.body.append(el)}el.textContent=text},text)}
+async function shot(name){await page.evaluate(()=>{const el=document.getElementById('demo-caption');if(el)el.style.visibility='hidden'});await page.screenshot({path:path.join(out,'screenshots',name),fullPage:true});await page.evaluate(()=>{const el=document.getElementById('demo-caption');if(el)el.style.visibility='visible'})}
+const pause=ms=>page.waitForTimeout(ms);
+try{
+ await page.goto('http://127.0.0.1:5173/');
+ await page.getByText('Backend connected').waitFor();
+ await page.evaluate(()=>document.fonts.ready);
+ await caption('NetSim Lite | Interactive network topology and logical packet routing simulator');await pause(4500);
+ await shot('01-topology.png');
+ await caption('Two routes connect PC-A and PC-B: via R1 costs 1 + 1 = 2; via R2 costs 3 + 2 = 5.');await pause(5000);
+ await page.getByRole('button',{name:'Send packet',exact:true}).click();
+ await pause(1000);await shot('02-packet-animation.png');
+ await page.getByRole('button',{name:'Send packet',exact:true}).waitFor({state:'visible'});
+ await pause(2200);
+ if(!(await page.locator('.route-result').innerText()).includes('PC-A → R1 → PC-B'))throw Error('Primary route mismatch');
+ await caption('Dijkstra selects the minimum-cost route: PC-A → R1 → PC-B. The log records each hop and delivery.');
+ await shot('03-shortest-path.png');await pause(5000);
+ await page.locator('.react-flow__edge').first().locator('.react-flow__edge-textwrapper').click();
+ await page.getByLabel('Link enabled').uncheck();
+ await caption('Link failure: disable the PC-A–R1 link, then send again to recalculate the route.');await pause(3500);
+ await page.getByRole('button',{name:'Send packet',exact:true}).click();await pause(3000);
+ if(!(await page.locator('.route-result').innerText()).includes('PC-A → R2 → PC-B'))throw Error('Reroute mismatch');
+ await caption('The alternative route through R2 is now selected. Total cost increases from 2 to 5.');
+ await shot('04-rerouting.png');await pause(5000);
+ await page.locator('.react-flow__edge').nth(2).locator('.react-flow__edge-textwrapper').click();await page.getByLabel('Link enabled').uncheck();
+ await page.getByRole('button',{name:'Calculate shortest path'}).click();
+ await page.getByText('Destination unreachable',{exact:true}).waitFor();
+ await caption('Both links leaving PC-A are disabled. The destination is unreachable and delivery cannot complete.');
+ await shot('05-unreachable.png');await pause(5000);
+ await page.getByRole('button',{name:'Reset to demo'}).click();
+ await page.getByRole('button',{name:'Save',exact:true}).click();
+ await caption('The editor supports devices, weighted links, and browser-local topology Save / Load.');await pause(4000);
+ await page.getByRole('button',{name:'Switch Connect devices'}).click();await page.getByLabel('Device name').fill('Lab switch');await page.getByLabel('IPv4 address',{exact:true}).fill('192.168.1.30');
+ await shot('06-device-properties.png');await pause(3500);
+ await page.getByRole('button',{name:'Load',exact:true}).click();
+ await caption('Loading restores the saved four-device topology, including link state and device positions.');await pause(3500);
+ await page.getByRole('button',{name:'Subnet calculator',exact:true}).click();
+ await page.getByRole('button',{name:'Calculate subnet'}).click();await page.getByText('192.168.1.63',{exact:true}).waitFor();
+ await caption('192.168.1.0/26: mask 255.255.255.192, broadcast .63, usable host range .1–.62, 62 hosts.');
+ await shot('07-subnet-calculator.png');await pause(6500);
+ await page.getByLabel('IPv4 address / prefix').fill('invalid');await page.getByRole('button',{name:'Calculate subnet'}).click();await page.getByRole('alert').waitFor();
+ await caption('Invalid IPv4 input is rejected with an error. No real packets are transmitted by this educational simulator.');
+ await shot('08-input-validation.png');await pause(5000);
+ await page.getByRole('button',{name:'Topology lab',exact:true}).click();
+ await caption('NetSim Lite | React + TypeScript + React Flow | FastAPI + Python heapq + ipaddress');await pause(4500);
+ if(errors.length)throw Error(errors.join('\n'));
+ await writeFile(path.join(out,'capture-status.json'),JSON.stringify({viewport:{width:1440,height:1260},browserErrors:errors,scenarios:['topology','packet-animation','shortest-path','rerouting','unreachable','device-properties','subnet','invalid-input'],video:'Captioned screen recording; no narration.'},null,2));
+ const video=page.video();await context.close();await rename(await video.path(),path.join(out,'NetSim_Lite_Demo.webm'));
+ console.log('Captured 8 screenshots and captioned demo video.');
+}finally{await browser.close()}
