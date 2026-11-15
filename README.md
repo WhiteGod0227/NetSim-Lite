@@ -1,5 +1,7 @@
 ﻿# NetSim Lite
 
+Live application: https://netsim-lite.vercel.app
+
 React/TypeScript + React Flow frontend and FastAPI backend for an educational network simulator.
 
 ## Setup
@@ -58,7 +60,7 @@ The production frontend builds into frontend/dist; serving that output requires 
 
 ## Production deployment
 
-See [DEPLOYMENT.md](DEPLOYMENT.md). The production entry point serves the compiled frontend and API together: `python -m backend.production`. A multi-stage Dockerfile, Compose configuration, pinned production dependencies, and Render blueprint are included. Build/run with `docker compose up --build -d` and open http://localhost:8080. The cloud deployment has not been performed.
+See [DEPLOYMENT.md](DEPLOYMENT.md). The production entry point serves the compiled frontend and API together: `python -m backend.production`. A multi-stage Dockerfile, Compose configuration, pinned production dependencies, and Render blueprint are included. Build/run with `docker compose up --build -d` and open http://localhost:8080. The full application is deployed on Vercel at https://netsim-lite.vercel.app.
 
 ## API
 

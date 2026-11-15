@@ -4,6 +4,8 @@ NetSim Lite can run as **one service**: FastAPI serves `/api/*`, API documentati
 
 ## Vercel deployment
 
+Live production URL: **https://netsim-lite.vercel.app**. The Vercel project is connected to `WhiteGod0227/NetSim-Lite` for Git deployments.
+
 Import `WhiteGod0227/NetSim-Lite` into Vercel with the **repository root** as Root Directory. The root `vercel.json` selects FastAPI; its build command installs and builds the frontend. `app.py` exports the combined ASGI application. Python 3.12 and the pinned root requirements are supplied. Do not set the Root Directory to `frontend`, because that would omit the Python backend.
 
 From an authenticated CLI at the project root, run `vercel --prod`. No database, API keys, or separate backend URL are required. The platform supplies the Python runtime; do not use the Dockerfile or a persistent Uvicorn start command for Vercel. Verify `/api/health`, packet delivery, rerouting, and subnet calculation after deployment. Local saved topologies remain specific to each browser and origin.
@@ -36,7 +38,7 @@ The multi-stage Dockerfile builds the frontend with `npm ci`, installs pinned pr
 3. Review the service plan/settings in Render and deploy. The Dockerfile builds both parts; no separate frontend service, database, or API URL setting is required.
 4. When deployment finishes, open the assigned HTTPS URL and verify `/api/health`, then send a packet and calculate a subnet.
 
-The blueprint uses the Docker runtime, `/api/health`, and PORT=10000. No hosting account, paid resource, or public deployment has been created by this preparation.
+The blueprint uses the Docker runtime, `/api/health`, and PORT=10000. No Render service has been created. The deployed service uses Vercel as described above.
 
 ## Native production process
 
@@ -90,7 +92,7 @@ The test URL setting skips launching Vite, so the browser scenarios exercise the
 
 Prepared release: `NetSim_Lite_Deploy.zip`, containing deployment source/configuration and tests. The frontend is built by Docker or the native build commands, rather than shipping local node_modules or a virtual environment.
 
-Verification limits: the native production server, production assets/API, and browser flows have been checked locally. Docker is not installed in this workspace, so the Docker image itself has not been built or run here. No cloud deployment has been performed.
+Verification limits: the native production server, production assets/API, and browser flows have been checked locally. Docker is not installed in this workspace, so the Docker image itself has not been built or run here. The Vercel production deployment is live at https://netsim-lite.vercel.app.
 
 ## Persistence and operation
 
