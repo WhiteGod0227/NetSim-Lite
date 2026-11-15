@@ -4,7 +4,7 @@ from zipfile import ZipFile, ZIP_DEFLATED
 import hashlib
 
 root = Path(__file__).resolve().parents[1]
-files = [root / name for name in ['Dockerfile', '.dockerignore', '.env.example', '.gitignore', 'compose.yaml', 'render.yaml', 'DEPLOYMENT.md', 'README.md', 'start.ps1']]
+files = [root / name for name in ['Dockerfile', '.dockerignore', '.env.example', '.gitignore', 'compose.yaml', 'render.yaml', 'DEPLOYMENT.md', 'README.md', 'start.ps1', 'app.py', 'requirements.txt', '.python-version', 'vercel.json', '.vercelignore']]
 for folder in ['backend', 'frontend/src', 'frontend/tests', 'tests']:
     files.extend(p for p in (root / folder).rglob('*') if p.is_file() and '__pycache__' not in p.parts)
 files.extend(root / 'frontend' / name for name in ['package.json', 'package-lock.json', 'index.html', 'tsconfig.json', 'vite.config.ts', 'playwright.config.ts'])

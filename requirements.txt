@@ -1,0 +1,2 @@
+# Vercel installs the tested runtime; test/document packages stay local.
+-r backend/requirements-production.txt

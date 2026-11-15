@@ -25,7 +25,7 @@ for i,slide in enumerate(prs.slides,1):
 files=[]
 for folder in ['backend','tests','scripts','frontend/src','frontend/tests','frontend/scripts']:
  files.extend(p for p in (root/folder).rglob('*') if p.is_file() and '__pycache__' not in p.parts)
-files.extend(root/p for p in ['.gitignore','README.md','BUGFIXES.md','start.ps1','project-guide.txt','Dockerfile','.dockerignore','.env.example','compose.yaml','render.yaml','DEPLOYMENT.md'])
+files.extend(root/p for p in ['.gitignore','README.md','BUGFIXES.md','start.ps1','project-guide.txt','Dockerfile','.dockerignore','.env.example','compose.yaml','render.yaml','DEPLOYMENT.md','app.py','requirements.txt','.python-version','vercel.json','.vercelignore'])
 files.extend(p for p in (root/'frontend').iterdir() if p.is_file())
 files.extend(p for p in out.iterdir() if p.suffix in ['.md','.json'])
 archive=out/'NetSim_Lite_Source.zip'

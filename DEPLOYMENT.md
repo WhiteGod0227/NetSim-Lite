@@ -2,6 +2,14 @@
 
 NetSim Lite can run as **one service**: FastAPI serves `/api/*`, API documentation, and the built React frontend on the same origin. Production does not use Vite's development server or a hard-coded localhost API URL.
 
+## Vercel deployment
+
+Import `WhiteGod0227/NetSim-Lite` into Vercel with the **repository root** as Root Directory. The root `vercel.json` selects FastAPI; its build command installs and builds the frontend. `app.py` exports the combined ASGI application. Python 3.12 and the pinned root requirements are supplied. Do not set the Root Directory to `frontend`, because that would omit the Python backend.
+
+From an authenticated CLI at the project root, run `vercel --prod`. No database, API keys, or separate backend URL are required. The platform supplies the Python runtime; do not use the Dockerfile or a persistent Uvicorn start command for Vercel. Verify `/api/health`, packet delivery, rerouting, and subnet calculation after deployment. Local saved topologies remain specific to each browser and origin.
+
+Reference: [FastAPI on Vercel](https://vercel.com/docs/frameworks/backend/fastapi).
+
 ## Docker deployment
 
 From the project root, with Docker installed:

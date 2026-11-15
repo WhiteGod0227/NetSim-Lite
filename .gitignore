@@ -19,3 +19,4 @@ deliverables/SHA256SUMS.txt
 .tools/
 *.pem
 *.key
+.vercel/
